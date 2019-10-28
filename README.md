@@ -36,7 +36,17 @@ libraries using this repository.
 
 ## Usage
 
-FIXME
+To start REPL that is also listening for Clojure socket REPL
+conections:
+```bash
+$ ./script/jdo
+```
+
+To run some tests that should be maintained so they stay relatively
+short:
+```bash
+$ ./script/jdo test
+```
 
 
 ## License
