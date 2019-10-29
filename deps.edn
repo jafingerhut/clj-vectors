@@ -1,5 +1,5 @@
 {:paths ["src"]
- :deps {org.organicdesign/Paguro {:mvn/version "3.1.2"}}
+ :deps {org.organicdesign/Paguro {:mvn/version "3.1.2-andy-mods"}}
  :aliases
  {;; Common alias to use for all Clojure/Java commands
   :clj {:jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}

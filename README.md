@@ -34,6 +34,20 @@ be possible to take advantage of those tests to exercise other vector
 libraries using this repository.
 
 
+## Prerequisites
+
+Install into your local `$HOME/.m2` a modified version of the Paguro
+library.  See comments of namespace clj-paguro-vector8 for why this
+was created.
+
+```bash
+$ git clone https://github.com/jafingerhut/Paguro
+$ cd Paguro
+$ git checkout andy-experiments
+$ ./mvn-build.sh
+```
+
+
 ## Usage
 
 To start REPL that is also listening for Clojure socket REPL
