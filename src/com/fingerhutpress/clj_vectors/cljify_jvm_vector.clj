@@ -46,7 +46,42 @@
                                 remove-last-elem
                                 replace-elem]
   `(do
-(deftype ~vector-seq-type-name-symbol [~'vec ~'idx]
+(deftype ~vector-seq-type-name-symbol
+    [~'vec ~'idx
+     ~(with-meta '_meta   {:tag clojure.lang.IPersistentMap})
+     ~(with-meta '_hash   {:unsynchronized-mutable true, :tag 'int})
+     ~(with-meta '_hasheq {:unsynchronized-mutable true, :tag 'int})]
+
+  Object
+  (~'hashCode [~'this]
+    (let [h# ~'_hash]
+      (if (== h# 0)
+        (loop [h# (int 1) xs# (seq ~'this)]
+          (if xs#
+            (let [x# (first xs#)]
+              (recur (unchecked-add-int (unchecked-multiply-int (int 31) h#)
+                                        (Util/hash x#))
+                     (next xs#)))
+            (do (set! ~'_hash (int h#))
+                h#)))
+        h#)))
+
+  clojure.lang.IHashEq
+  (~'hasheq [~'this]
+    (let [h# ~'_hasheq]
+      (if (== h# 0)
+        (let [h# (hash-ordered-coll ~'this)]
+          (do (set! ~'_hasheq (int h#))
+              h#))
+        h#)))
+
+  clojure.lang.IMeta
+  (~'meta [~'_] ~'_meta)
+
+  clojure.lang.IObj
+  (~'withMeta [~'_ ~'m]
+    (new ~vector-seq-type-name-symbol ~'vec ~'idx ~'_meta ~'_hash ~'_hasheq))
+
   clojure.lang.Counted
   (~'count [~'this]
     (- (count ~'vec) ~'idx))
@@ -56,7 +91,7 @@
   (~'next [~'this]
     (let [nextidx# (inc ~'idx)]
       (when (< nextidx# (count ~'vec))
-        (new ~vector-seq-type-name-symbol ~'vec nextidx#))))
+        (new ~vector-seq-type-name-symbol ~'vec nextidx# nil 0 0))))
   (~'more [~'this]
     (let [s# (.next ~'this)]
       (or s# (clojure.lang.PersistentList/EMPTY))))
@@ -218,7 +253,9 @@
 
   clojure.lang.Reversible
   (~'rseq [~'this]
-    (throw-unsupported))
+    (if (pos? ~'cnt)
+      (clojure.lang.APersistentVector$RSeq. ~'this (unchecked-dec-int ~'cnt))
+      nil))
 
   clojure.lang.Associative
   (~'assoc [~'this ~'k ~'val]
@@ -269,7 +306,7 @@
   (~'seq [~'this]
     (if (zero? ~'cnt)
       nil
-      (new ~vector-seq-type-name-symbol ~'this 0)))
+      (new ~vector-seq-type-name-symbol ~'this 0 nil 0 0)))
 
   clojure.lang.Sequential
 
