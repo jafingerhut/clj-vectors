@@ -2,6 +2,7 @@
   (:require [clojure.test :as test :refer [deftest testing is are]]
             [com.fingerhutpress.clj-vectors.test-utils]
             [com.fingerhutpress.clj-vectors.test-common :as tc]
+            [com.fingerhutpress.clj-vectors.test-long :as tl]
             [clojure.test.check.generators :as gen]
             [collection-check.core :as cc]
             [com.fingerhutpress.clj-vectors.utils :as utils]
@@ -31,33 +32,49 @@
 (defn paguro-seq->vec [s]
   (into empty-vector-constant s))
 
-(def paguro-test-config
-  {:seq->vec paguro-seq->vec
-   :test-subvec cp/subvec
-   :test-catvec cp/catvec
-   :check-subvec (partial utils/check-subvec paguro-seq->vec
-                          cp/subvec utils/same-coll?)
-   :check-catvec (partial utils/check-catvec paguro-seq->vec
-                          cp/catvec utils/same-coll?)
-   })
+(let [seq->vec paguro-seq->vec
+      test-subvec cp/subvec
+      test-catvec cp/catvec
+      same-coll? utils/same-coll?]
+  (def paguro-test-config
+    {:seq->vec seq->vec
+     :test-subvec test-subvec
+     :test-catvec test-catvec
+     :check-subvec (partial utils/check-subvec seq->vec test-subvec same-coll?)
+     :check-catvec (partial utils/check-catvec seq->vec test-catvec same-coll?)
+     :generative-check-subvec (partial utils/generative-check-subvec
+                                       seq->vec test-subvec same-coll?)
+     :generative-check-catvec (partial utils/generative-check-catvec
+                                       seq->vec test-catvec same-coll?)}))
 
 (deftest test-common-paguro
   (tc/test-all-common paguro-test-config))
+
+(deftest test-long-paguro
+  (tl/test-all-long paguro-test-config))
 
 (def empty-vector-constant8 (cp8/vector))
 
 (defn paguro-seq->vec8 [s]
   (into empty-vector-constant8 s))
 
-(def paguro-test-config8
-  {:seq->vec paguro-seq->vec8
-   :test-subvec cp8/subvec
-   :test-catvec cp8/catvec
-   :check-subvec (partial utils/check-subvec paguro-seq->vec8
-                          cp8/subvec utils/same-coll?)
-   :check-catvec (partial utils/check-catvec paguro-seq->vec8
-                          cp8/catvec utils/same-coll?)
-   })
+(let [seq->vec paguro-seq->vec8
+      test-subvec cp8/subvec
+      test-catvec cp8/catvec
+      same-coll? utils/same-coll?]
+  (def paguro-test-config8
+    {:seq->vec seq->vec
+     :test-subvec test-subvec
+     :test-catvec test-catvec
+     :check-subvec (partial utils/check-subvec seq->vec test-subvec same-coll?)
+     :check-catvec (partial utils/check-catvec seq->vec test-catvec same-coll?)
+     :generative-check-subvec (partial utils/generative-check-subvec
+                                       seq->vec test-subvec same-coll?)
+     :generative-check-catvec (partial utils/generative-check-catvec
+                                       seq->vec test-catvec same-coll?)}))
 
 (deftest test-common-paguro8
   (tc/test-all-common paguro-test-config8))
+
+(deftest test-long-paguro8
+  (tl/test-all-long paguro-test-config8))
