@@ -1,4 +1,5 @@
 (ns com.fingerhutpress.clj-vectors.cljify-jvm-vector
+  (:require [clojure.core.protocols :refer [IKVReduce]])
   (:import (clojure.lang RT Util)))
 
 
@@ -328,6 +329,23 @@
                 (if (zero? comp#)
                   (recur (unchecked-inc-int i#))
                   comp#))))))))
+
+  ;; core.rrb-vector has a more efficient implementation of kv-reduce
+  ;; that is customized for its data structure.  Here we are not going
+  ;; to make any assumptions about the data structure used to
+  ;; implement the vector, so this implementation is likely not the
+  ;; most efficient one.
+  IKVReduce
+  (~'kv-reduce [~'this ~'f ~'init]
+    (loop [i# (int 0)
+           init# ~'init]
+      (let [nextinit# (~'f init# i# (.nth ~'this i#))]
+        (if (reduced? nextinit#)
+          @nextinit#
+          (let [nexti# (unchecked-inc-int i#)]
+            (if (< nexti# ~'cnt)
+              (recur nexti# nextinit#)
+              nextinit#))))))
 
   java.lang.Iterable
   (~'iterator [~'this]
