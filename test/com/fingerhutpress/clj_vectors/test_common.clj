@@ -4,7 +4,15 @@
             [com.fingerhutpress.clj-vectors.test-utils :as u]
             [clojure.core.reducers :as r]))
 
-(def do-paguro-failing-tests false)
+;; Tests surrounded by (when do-paguro-312-failing-tests ...) fail with
+;; Paguro version 3.1.2.  See this PR and issue:
+;; https://github.com/GlenKPeterson/Paguro/pull/33
+;; https://github.com/GlenKPeterson/Paguro/issues/31
+
+;; The proposed fix in the PR causes all of those tests to pass for
+;; me, so it seems at least not completely wrong.
+(def do-paguro-312-failing-tests true)
+
 
 (defn test-slicing
   [{:keys [check-subvec] :as opts}]
@@ -13,7 +21,7 @@
 (defn test-splicing
   [{:keys [check-catvec test-catvec seq->vec] :as opts}]
   (is (check-catvec 1025 1025 3245 1025 32768 1025 1025 10123 1025 1025))
-  (when do-paguro-failing-tests
+  (when do-paguro-312-failing-tests
     (is (check-catvec 10 40 40 40 40 40 40 40 40)))
   (is (apply check-catvec (repeat 30 33)))
   (is (check-catvec 26091 31388 1098 43443 46195 4484 48099 7905
@@ -53,7 +61,7 @@
         
         exp-val (range (last prefix-sums))]
     (is (= -1 (utils/first-diff v01-15 exp-val)))
-    (when do-paguro-failing-tests
+    (when do-paguro-312-failing-tests
       (is (= -1 (utils/first-diff (into v01-04 v05-15) exp-val))))))
 
 (defn test-reduce
@@ -62,9 +70,8 @@
         v2 (seq->vec (range 128))]
     (testing "reduce"
       (is (= (reduce + v1) (reduce + v2))))
-    (when do-paguro-failing-tests
-      (testing "reduce-kv"
-        (is (= (reduce-kv + 0 v1) (reduce-kv + 0 v2)))))))
+    (testing "reduce-kv"
+      (is (= (reduce-kv + 0 v1) (reduce-kv + 0 v2))))))
 
 (defn test-reduce-2
   [{:keys [seq->vec test-subvec] :as opts}]
@@ -127,11 +134,11 @@
 
 (defn test-relaxed
   [{:keys [seq->vec test-catvec] :as opts}]
-  (when do-paguro-failing-tests
+  (when do-paguro-312-failing-tests
     (is (= (into (test-catvec (seq->vec (range 123)) (seq->vec (range 68)))
                  (range 64))
            (concat (range 123) (range 68) (range 64)))))
-  (when do-paguro-failing-tests
+  (when do-paguro-312-failing-tests
     (is (= (utils/slow-into (test-catvec (seq->vec (range 123))
                                          (seq->vec (range 68)))
                             (range 64))
@@ -316,7 +323,7 @@
 (defn test-crrbv-12
   [{:keys [seq->vec test-catvec] :as opts}]
   (let [v (seq->vec crrbv-12-data)]
-    (when do-paguro-failing-tests
+    (when do-paguro-312-failing-tests
       (testing "Ascending order after quicksort"
         (is (ascending? (quicksort test-catvec seq->vec v)))))
     (testing "Repeated catvec followed by pop"
@@ -419,12 +426,12 @@
 (defn test-crrbv-20
   [{:keys [test-subvec] :as opts}]
   ;; This one passes with core.rrb-vector
-  (when do-paguro-failing-tests
+  (when do-paguro-312-failing-tests
     (is (= (play-core 10 1128)
            (play-vut opts 10 1128))))
   ;; This ends up with (play-vut opts 10 1129) throwing an exception, with
   ;; core.rrb-vector version 0.0.14
-  (when do-paguro-failing-tests
+  (when do-paguro-312-failing-tests
     (is (= (play-core 10 1129)
            (play-vut opts 10 1129))))
 
@@ -548,7 +555,7 @@
   [opts]
   ;; This one passes with core.rrb-vector
 ;;  (u/reset-optimizer-counts!)
-  (when do-paguro-failing-tests
+  (when do-paguro-312-failing-tests
     (is (= (puzzle-b-core 977)
            (puzzle-b-vut opts 977))))
 ;;  (u/print-optimizer-counts)

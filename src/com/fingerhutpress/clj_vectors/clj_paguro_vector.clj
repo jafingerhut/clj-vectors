@@ -107,24 +107,6 @@
      (splicev (splicev (splicev v1 v2) (splicev v3 v4))
               (apply catvec vn))))
 
-
-#_(def vector-implementation-functions
-  {:empty-vector (fn paguro-empty-vec []
-                   paguro-vector-constant)
-   :java-hashcode (fn paguro-java-hashcode [^RrbTree$ImRrbt v]
-                    (.hashCode v))
-   :java-tostring (fn paguro-java-tostring [^RrbTree$ImRrbt v]
-                    (.toString v))
-   :get-nth (fn paguro-get-nth [^RrbTree$ImRrbt v idx]
-              (.get v idx))
-   :append-one-elem (fn paguro-append-one-elem [^RrbTree$ImRrbt v elem]
-                      (.append v elem))
-   :remove-last-elem (fn paguro-remove-last-elem [^RrbTree$ImRrbt v]
-                       (let [idx (dec (.size v))]
-                         (.without v idx)))
-   :replace-elem (fn paguro-replace-elem [^RrbTree$ImRrbt v idx new-elem]
-                   (.replace v idx new-elem))})
-
 (comment
 
 (import '(org.organicdesign.fp.collections

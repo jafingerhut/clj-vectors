@@ -6,13 +6,14 @@
             [collection-check.core :as cc]
             [com.fingerhutpress.clj-vectors.utils :as utils]
             [com.fingerhutpress.clj-vectors.clj-paguro-vector :as cp]
-            [com.fingerhutpress.clj-vectors.clj-paguro-vector8 :as cp8]))
+            [com.fingerhutpress.clj-vectors.clj-paguro-vector8 :as cp8]
+            ))
 
 (set! *warn-on-reflection* true)
 
 ;(def num-tests 1)  ;; smoke test
 ;(def num-tests 10)  ;; very short
-(def num-tests 100)
+(def num-tests 500)
 ;(def num-tests 1000)  ;; medium ~12 sec
 ;(def num-tests 10000)  ;; long test ~2 min
 ;(def num-tests 100000)  ;; very long test
@@ -21,7 +22,7 @@
   (println "assert-vector-like for RrbTree (32) with num-tests=" num-tests)
   (cc/assert-vector-like num-tests (cp/vector) gen/int))
 
-#_(deftest test-vector-like8
+(deftest test-vector-like8
   (println "assert-vector-like for RrbTree8 with num-tests=" num-tests)
   (cc/assert-vector-like num-tests (cp8/vector) gen/int))
 
@@ -42,3 +43,21 @@
 
 (deftest test-common-paguro
   (tc/test-all-common paguro-test-config))
+
+(def empty-vector-constant8 (cp8/vector))
+
+(defn paguro-seq->vec8 [s]
+  (into empty-vector-constant8 s))
+
+(def paguro-test-config8
+  {:seq->vec paguro-seq->vec8
+   :test-subvec cp8/subvec
+   :test-catvec cp8/catvec
+   :check-subvec (partial utils/check-subvec paguro-seq->vec8
+                          cp8/subvec utils/same-coll?)
+   :check-catvec (partial utils/check-catvec paguro-seq->vec8
+                          cp8/catvec utils/same-coll?)
+   })
+
+(deftest test-common-paguro8
+  (tc/test-all-common paguro-test-config8))
