@@ -1,5 +1,6 @@
 (ns com.fingerhutpress.clj-vectors.test-long
-  (:require [clojure.test :as test :refer [deftest testing is are]])
+  (:require [clojure.test :as test :refer [deftest testing is are]]
+            [com.fingerhutpress.clj-vectors.utils :as utils])
   (:import (clojure.lang ExceptionInfo)))
 
 (def generative-test-length :short)
@@ -92,15 +93,18 @@
 
 (defn test-all-long
   [opts]
-  (assert (every? #(contains? opts %) [;;:seq->vec
-                                       ;;:test-subvec
-                                       ;;:test-catvec
-                                       ;;:check-subvec
-                                       ;;:check-catvec
-                                       :generative-check-subvec
-                                       :generative-check-catvec
-                                       ]))
-  (test-slicing-generative opts)
-  (test-splicing-generative opts)
-  (test-crrbv-17 opts)
-  )
+  (assert (every? #(contains? opts %) [:seq->vec
+                                       :test-subvec
+                                       :test-catvec
+                                       :same-coll?]))
+  (let [{:keys [seq->vec test-subvec test-catvec same-coll?]} opts
+        opts (assoc opts
+                    :generative-check-subvec
+                    (partial utils/generative-check-subvec
+                             seq->vec test-subvec same-coll?)
+                    :generative-check-catvec
+                    (partial utils/generative-check-catvec
+                             seq->vec test-catvec same-coll?))]
+    (test-slicing-generative opts)
+    (test-splicing-generative opts)
+    (test-crrbv-17 opts)))

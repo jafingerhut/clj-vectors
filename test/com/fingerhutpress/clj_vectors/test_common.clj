@@ -592,15 +592,18 @@
   (assert (every? #(contains? opts %) [:seq->vec
                                        :test-subvec
                                        :test-catvec
-                                       :check-subvec
-                                       :check-catvec]))
-  (let [seq->vec (:seq->vec opts)
+                                       :same-coll?]))
+  (let [{:keys [seq->vec test-subvec test-catvec same-coll?]} opts
         empty-vector #(seq->vec [])
         v (empty-vector)
         opts (assoc opts
                     :empty-vector empty-vector
                     :supports-transient? (instance?
                                           clojure.lang.IEditableCollection v)
+                    :check-subvec (partial utils/check-subvec
+                                           seq->vec test-subvec same-coll?)
+                    :check-catvec (partial utils/check-catvec
+                                           seq->vec test-catvec same-coll?)
                     :array-kind (get opts :array-kind :object-array))]
 
     (when (:supports-transient? opts)
