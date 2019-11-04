@@ -1,6 +1,7 @@
 (ns com.fingerhutpress.clj-vectors.clj-paguro-vector
   (:refer-clojure :exclude [vector vec subvec])
-  (:require [com.fingerhutpress.clj-vectors.cljify-jvm-vector :as c])
+  (:require [com.fingerhutpress.clj-vectors.cljify-jvm-vector :as c]
+            [com.fingerhutpress.clj-vectors.utils :as utils])
   (:import (org.organicdesign.fp.collections
             RrbTree
             RrbTree$ImRrbt)
@@ -8,6 +9,18 @@
             Tuple2)))
 
 (set! *warn-on-reflection* true)
+
+(def rrbtree-class org.organicdesign.fp.collections.RrbTree)
+(def node-length-pow-2
+  (utils/get-static-int-field rrbtree-class "NODE_LENGTH_POW_2"))
+(def strict-node-length
+  (utils/get-static-int-field rrbtree-class "STRICT_NODE_LENGTH"))
+(def half-strict-node-length
+  (utils/get-static-int-field rrbtree-class "HALF_STRICT_NODE_LENGTH"))
+(def min-node-length
+  (utils/get-static-int-field rrbtree-class "MIN_NODE_LENGTH"))
+(def max-node-length
+  (utils/get-static-int-field rrbtree-class "MAX_NODE_LENGTH"))
 
 (def paguro-empty-vector-constant (RrbTree/empty))
 
@@ -106,6 +119,44 @@
   ([v1 v2 v3 v4 & vn]
      (splicev (splicev (splicev v1 v2) (splicev v3 v4))
               (apply catvec vn))))
+
+(defn height [^PaguroRrbVector vec]
+  (let [^RrbTree$ImRrbt v (.v vec)]
+    (.height v)))
+
+(defn max-supported-height []
+  ;; I believe 6 might be the maximum supported depth for Paguro
+  ;; RrbTree, but not sure.  I will try that out and see if any tests
+  ;; causes that height to be exceeded.
+  6)
+
+(defn lg-fullness
+  "Return a positive value if the number of elements is considered
+  'large enough' for a tree of the given height, or negative if it is
+  is considered too low.  I am picking too low to be less than
+  1/(2^(2*lg-max-branch-factor)) of maximum capacity for the given
+  height.  It is already somewhat questionable to be less than
+  1/(2^lg-max-branch-factor), but at least for now I'll give such
+  trees a pass."
+  [vec]
+  (let [lg-max-branch-factor node-length-pow-2
+        max-branch-factor strict-node-length
+        h (height vec)
+        lg-max-tree-capacity (* lg-max-branch-factor h)
+        n (count vec)
+        n (cond (zero? n) 1  ; special case to avoid -Infinity ret value
+                (< n max-branch-factor) n
+                :else (* max-branch-factor (quot n max-branch-factor)))
+        lg-n (/ (Math/log n) (Math/log 2))]
+    (+ (* 2 lg-max-branch-factor) (- lg-n lg-max-tree-capacity))))
+
+(defn print-paguro-library-info []
+  (println "\n" "NODE_LENGTH_POW_2" node-length-pow-2
+           "\n" "STRICT_NODE_LENGTH" strict-node-length
+           "\n" "HALF_STRICT_NODE_LENGTH" half-strict-node-length
+           "\n" "MIN_NODE_LENGTH" min-node-length
+           "\n" "MAX_NODE_LENGTH" max-node-length))
+
 
 (comment
 

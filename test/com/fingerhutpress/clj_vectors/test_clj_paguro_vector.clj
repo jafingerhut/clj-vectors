@@ -27,9 +27,14 @@
   {:seq->vec paguro-seq->vec
    :test-subvec cp/subvec
    :test-catvec cp/catvec
-   :same-coll? utils/same-coll?})
+   :same-coll? utils/same-coll?
+   :height cp/height
+   :max-supported-height cp/max-supported-height
+   :lg-fullness cp/lg-fullness})
 
 (deftest test-common-paguro
+  (println "Details of Paguro RrbTree (default 32) implementation:")
+  (cp/print-paguro-library-info)
   (tc/test-all-common paguro-test-config))
 
 (deftest test-long-paguro
@@ -51,15 +56,22 @@
   {:seq->vec paguro-seq->vec8
    :test-subvec cp8/subvec
    :test-catvec cp8/catvec
-   :same-coll? utils/same-coll?})
+   :same-coll? utils/same-coll?
+   :height cp8/height
+   :max-supported-height cp8/max-supported-height
+   :lg-fullness cp8/lg-fullness})
 
 (deftest test-common-paguro8
+  (println "Details of Paguro RrbTree8 implementation:")
+  (cp8/print-paguro-library-info)
   (tc/test-all-common paguro-test-config8))
 
 (deftest test-long-paguro8
+  (println "Details of Paguro RrbTree8 implementation:")
+  (cp8/print-paguro-library-info)
   (tl/test-all-long paguro-test-config8))
 
-(deftest test-vector-like8
+(test deftest-vector-like8
   (println "assert-vector-like for RrbTree8 with num-collection-check-tests="
            num-collection-check-tests)
   (cc/assert-vector-like num-collection-check-tests (cp8/vector) gen/int))

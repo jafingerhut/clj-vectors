@@ -514,37 +514,36 @@
 (defn- puzzle-b-core [n]
   (puzzle-b n clojure.core/vec clojure.core/into clojure.core/subvec))
 
-#_(defn- get-shift [v]
-  (.-shift v))
-
-#_(defn- vstats [v]
-  (str "cnt=" (count v)
-       " shift=" (get-shift v)
-       " %=" (format "%5.1f" (* 100.0 (dv/fraction-full v)))))
-
 ;;(def custom-catvec-data (atom []))
 
-#_(defn- custom-catvec
-  [{:keys [test-catvec]} & args]
-  (let [;;n (count @custom-catvec-data)
-        max-arg-shift (apply max (map get-shift args))
-        ret (apply test-catvec args)
-        ret-shift (get-shift ret)]
-    (when (or (>= ret-shift 30)
-              (> ret-shift max-arg-shift))
-      (doall (map-indexed
-              (fn [idx v]
-                (println (str "custom-catvec ENTER v" idx "  " (vstats v))))
-              args))
-      (println (str "custom-catvec LEAVE ret " (vstats ret))))
-    ;;(swap! custom-catvec-data conj {:args args :ret ret})
-    ;;(println "custom-catvec RECRD in index" n "of @custom-catvec-data")
-    ret))
-
-(defn make-custom-catvec
+#_(defn make-custom-catvec
   [{:keys [test-catvec]}]
   (fn [& args]
     (apply test-catvec args)))
+
+(defn- make-custom-catvec
+  [{:keys [test-catvec height max-supported-height lg-fullness]}]
+  (let [num-calls (atom 0)]
+    (fn [& args]
+      (swap! num-calls inc)
+      (let [;;n (count @custom-catvec-data)
+            max-arg-height (apply max (map height args))
+            ret (apply test-catvec args)
+            ret-height (height ret)]
+        (when (or (>= ret-height (max-supported-height))
+                  (> ret-height (inc max-arg-height))
+                  (< (lg-fullness ret) 0)
+                  (== 1 (mod @num-calls 500)))
+          (doall (map-indexed
+                  (fn [idx v]
+                    (println (str "custom-catvec ENTER v" idx "  "
+                                  (utils/vstats v height lg-fullness))))
+                  args))
+          (println (str "custom-catvec LEAVE ret "
+                        (utils/vstats ret height lg-fullness))))
+        ;;(swap! custom-catvec-data conj {:args args :ret ret})
+        ;;(println "custom-catvec RECRD in index" n "of @custom-catvec-data")
+        ret))))
 
 (defn- puzzle-b-vut
   [{:keys [seq->vec test-subvec] :as opts}
@@ -592,7 +591,10 @@
   (assert (every? #(contains? opts %) [:seq->vec
                                        :test-subvec
                                        :test-catvec
-                                       :same-coll?]))
+                                       :same-coll?
+                                       :height
+                                       :max-supported-height
+                                       :lg-fullness]))
   (let [{:keys [seq->vec test-subvec test-catvec same-coll?]} opts
         empty-vector #(seq->vec [])
         v (empty-vector)

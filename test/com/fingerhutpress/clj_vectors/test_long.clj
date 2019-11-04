@@ -59,14 +59,14 @@
 ;; approach is effective at avoiding a crash for this scenario, but at
 ;; a dramatic extra run-time cost.
 
-(defn vector-push-f [v seq->vec test-catvec checking-catvec]
+(defn vector-push-f [v seq->vec test-catvec checking-catvec height lg-fullness]
   (loop [v v
          i 0]
     (let [check? (or (zero? (mod i 10000))
                      (and (> i 99000) (zero? (mod i 100)))
                      (and (> i 99900) (zero? (mod i 10))))]
       (when check?
-        (println "i=" i " ")
+        (println "i=" i " " (utils/vstats v height lg-fullness))
         #_(u/print-optimizer-counts))
       (if (< i benchmark-size)
         (recur (if check?
@@ -81,14 +81,15 @@
 ;; 138 sec - cljs 1.10.238, OpenJDK 11.0.4, nodejs 8.10.0
 ;; 137 sec - cljs 1.10.238, OpenJDK 11.0.4, Spidermonkey JavaScript-C52.9.1
 (defn test-crrbv-17
-  [{:keys [seq->vec test-catvec] :as opts}]
+  [{:keys [seq->vec test-catvec height lg-fullness] :as opts}]
   #_(u/reset-optimizer-counts!)
   ;; TBD: Consider passing in, within opts, both test-catvec and
   ;; checking-catvec, for test functions like this where it is
   ;; beneficial to use both.
   (let [checking-catvec test-catvec]
     (is (= (reverse (range benchmark-size))
-           (vector-push-f (seq->vec []) seq->vec test-catvec checking-catvec)))))
+           (vector-push-f (seq->vec []) seq->vec test-catvec checking-catvec
+                          height lg-fullness)))))
 
 
 (defn test-all-long

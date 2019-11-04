@@ -140,3 +140,13 @@
         (throw
          (ex-info "check-catvec failure w/o Exception" {:cnts cnts})))))
   true)
+
+(defn vstats [v height lg-fullness]
+  (str "cnt=" (count v)
+       " height=" (height v)
+       " lgfull=" (format "%5.2f" (lg-fullness v))))
+
+(defn get-static-int-field [^Class klass field-name]
+  (let [field (.getDeclaredField ^Class klass field-name)]
+    (.setAccessible ^java.lang.reflect.Field field true)
+    (.getInt ^java.lang.reflect.Field field klass)))
