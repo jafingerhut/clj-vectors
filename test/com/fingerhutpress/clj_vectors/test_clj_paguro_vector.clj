@@ -71,7 +71,7 @@
   (cp8/print-paguro-library-info)
   (tl/test-all-long paguro-test-config8))
 
-(test deftest-vector-like8
+(deftest test-vector-like8
   (println "assert-vector-like for RrbTree8 with num-collection-check-tests="
            num-collection-check-tests)
   (cc/assert-vector-like num-collection-check-tests (cp8/vector) gen/int))
