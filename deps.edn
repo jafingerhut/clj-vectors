@@ -1,6 +1,7 @@
 {:paths ["src"]
  :deps {org.organicdesign/Paguro {:mvn/version "3.1.2-andy-mods"}
         ;;org.organicdesign/Paguro {:mvn/version "3.1.2"}
+        ;;org.organicdesign/Paguro {:mvn/version "3.1.3"}
        }
  :aliases
  {;; Common alias to use for all Clojure/Java commands
@@ -30,6 +31,9 @@
 ;;  :cljs-runt {:main-opts ["-m" "cljs.main"
 ;;                          "-re" "node"
 ;;                          "-e" "(require,'[clojure.test,:as,t],'clojure.core.rrb-vector.test-cljs-only,'clojure.core.rrb-vector.test-common),(t/run-tests,'clojure.core.rrb-vector.test-common),(t/run-tests,'clojure.core.rrb-vector.test-cljs-only)"]}
+
+  :cljol {:extra-deps {cljol {:git/url "https://github.com/jafingerhut/cljol"
+                              :sha "bb5549e9832e73e4a9fc5dfdf695c48e797729fa"}}}
 
   ;; pull in specific versions of Clojure:
   :1.7    {:override-deps {org.clojure/clojure {:mvn/version "1.7.0"}}}
