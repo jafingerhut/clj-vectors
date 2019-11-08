@@ -120,6 +120,27 @@
      (splicev (splicev (splicev v1 v2) (splicev v3 v4))
               (apply catvec vn))))
 
+(let [^java.lang.reflect.Method m (.getDeclaredMethod RrbTree$ImRrbt
+                                                      "debugValidate"
+                                                      (make-array Class 0))
+      empty-object-arr (object-array [])]
+  (.setAccessible m true)
+  (defn check-invariants
+    "Return a map that always contains the key :error with a boolean
+    value of true if a problem was found in the data structure vec,
+    otherwise false.  If true, there will also be a key :description
+    with a string value, and :exception with a value of the exception
+    thrown by the RrbTree class's debugValidate method."
+    [^PaguroRrbVector vec]
+    (let [^RrbTree$ImRrbt v (.v vec)]
+      (try
+        (.invoke m v empty-object-arr)
+        {:error false}
+        (catch IllegalStateException e
+          {:error true,
+           :description (.getMessage e)
+           :exception e})))))
+
 (defn height [^PaguroRrbVector vec]
   (let [^RrbTree$ImRrbt v (.v vec)]
     (.height v)))
