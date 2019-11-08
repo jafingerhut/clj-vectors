@@ -71,6 +71,10 @@
                v))]
     (same-coll? v1 v2)))
 
+(defn check-catvec-ranges [counts]
+  (let [prefix-sums (reductions + counts)]
+    (map range (cons 0 prefix-sums) prefix-sums)))
+
 (defn check-catvec
   "Perform a sequence of calls to (test-catvec v start end) on a
   vector of a type under test, instances of which can be constructed
@@ -80,8 +84,7 @@
   Return true if they give the same results, according to (same-coll?
   clojure-vector-result other-vector-type-result), otherwise false."
   [seq->vec test-catvec same-coll? & counts]
-  (let [prefix-sums (reductions + counts)
-        ranges (map range (cons 0 prefix-sums) prefix-sums)
+  (let [ranges (check-catvec-ranges counts)
         v1 (apply concat ranges)
         v2 (apply test-catvec (map seq->vec ranges))]
     (same-coll? v1 v2)))
