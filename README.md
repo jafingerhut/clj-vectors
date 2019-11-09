@@ -29,16 +29,17 @@ functions.
 
 There are also many tests in the
 [`core.rrb-vector`](https://github.com/clojure/core.rrb-vector)
-library that manipulate vectors sing Clojure functions, and it should
+library that manipulate vectors using Clojure functions, and it should
 be possible to take advantage of those tests to exercise other vector
-libraries using this repository.
+libraries using this repository.  Some of the test code in the
+`core.rrb-vector` has already been adapted for use in this repository.
 
 
 ## Prerequisites
 
-Install into your local `$HOME/.m2` a modified version of the Paguro
-library.  See comments of namespace clj-paguro-vector8 for why this
-was created.
+Install into your local `$HOME/.m2` modified versions of the Paguro
+and Bifurcan libraries.  See comments of namespace clj-paguro-vector8
+for why the modified version of the Paguro library was created.
 
 ```bash
 $ git clone https://github.com/jafingerhut/Paguro
@@ -46,6 +47,17 @@ $ cd Paguro
 $ git checkout andy-experiments
 $ ./mvn-build.sh
 ```
+
+```bash
+$ git clone https://github.com/jafingerhut/bifurcan
+$ cd bifurcan
+$ git checkout experimental-changes
+$ lein install
+```
+
+I had success running the commands above on a system with Maven 3.6.2
+and Leiningen 2.9.1 installed.  Most likely other versions will work,
+too.
 
 
 ## Usage
