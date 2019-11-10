@@ -12,6 +12,13 @@
 
 (set! *warn-on-reflection* true)
 
+;(def num-collection-check-tests 1)  ;; smoke test
+;(def num-collection-check-tests 10)  ;; very short
+(def num-collection-check-tests 500)
+;(def num-collection-check-tests 1000)  ;; medium ~12 sec
+;(def num-collection-check-tests 10000)  ;; long test ~2 min
+;(def num-collection-check-tests 100000)  ;; very long test
+
 (def empty-vector-constant (bl/vector))
 
 (defn seq->vec [s]
@@ -30,6 +37,14 @@
   (println "Details of Bifurcan List (default 32) implementation:")
   (bl/print-library-info)
   (tc/test-all-common test-config))
+
+(deftest test-long-bifurcan
+  (tl/test-all-long test-config))
+
+(deftest test-vector-like
+  (println "assert-vector-like for Bifurcan List(32) with num-collection-check-tests="
+           num-collection-check-tests)
+  (cc/assert-vector-like num-collection-check-tests empty-vector-constant gen/int))
 
 
 (comment
