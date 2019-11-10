@@ -29,52 +29,52 @@
 (def max-node-length
   (utils/get-static-int-field rrbtree-class "MAX_NODE_LENGTH"))
 
-(def paguro-empty-vector-constant (RrbTree8/empty))
+(def empty-vector-constant (RrbTree8/empty))
 
-(defn- paguro-empty-vec []
-  paguro-empty-vector-constant)
+(defn- empty-vec []
+  empty-vector-constant)
 
-(defn- paguro-java-hashcode [^RrbTree8$ImRrbt v]
+(defn- java-hashcode [^RrbTree8$ImRrbt v]
   (.hashCode v))
 
-(defn- paguro-java-tostring [^RrbTree8$ImRrbt v]
+(defn- java-tostring [^RrbTree8$ImRrbt v]
   (.toString v))
 
-(defn- paguro-get-nth [^RrbTree8$ImRrbt v idx]
+(defn- get-nth [^RrbTree8$ImRrbt v idx]
   (.get v idx))
 
-(defn- paguro-append-one-elem [^RrbTree8$ImRrbt v elem]
+(defn- append-one-elem [^RrbTree8$ImRrbt v elem]
   (.append v elem))
 
-(defn- paguro-remove-last-elem [^RrbTree8$ImRrbt v]
+(defn- remove-last-elem [^RrbTree8$ImRrbt v]
   (let [idx (dec (.size v))]
     (.without v idx)))
 
-(defn- paguro-replace-elem [^RrbTree8$ImRrbt v idx new-elem]
+(defn- replace-elem [^RrbTree8$ImRrbt v idx new-elem]
   (let [i (int idx)]
     (.replace v i new-elem)))
 
 (c/generate-vector-type PaguroRrbVector
                         PaguroRrbVecSeq
-                        paguro-empty-vec
-                        paguro-java-hashcode
-                        paguro-java-tostring
-                        paguro-get-nth
-                        paguro-append-one-elem
-                        paguro-remove-last-elem
-                        paguro-replace-elem)
+                        empty-vec
+                        java-hashcode
+                        java-tostring
+                        get-nth
+                        append-one-elem
+                        remove-last-elem
+                        replace-elem)
 
 (defn vector [& elems]
-  (let [v (PaguroRrbVector. paguro-empty-vector-constant 0 nil 0 0)]
+  (let [v (PaguroRrbVector. empty-vector-constant 0 nil 0 0)]
     (reduce conj v elems)))
 
 (defn vec [coll]
   (apply vector coll))
 
-(defn- paguro-subvec [^RrbTree8$ImRrbt v start end size]
+(defn- subvec* [^RrbTree8$ImRrbt v start end size]
   (if (<= 0 start end size)
     (if (== start end)
-      paguro-empty-vector-constant
+      empty-vector-constant
       (let [^Tuple2 tup1 (.split v end)
             ^RrbTree8$ImRrbt before-end (._1 tup1)
             ^Tuple2 tup2 (.split before-end start)]
@@ -85,7 +85,7 @@
   ([vec start]
    (subvec vec start (count vec)))
   ([^PaguroRrbVector vec start end]
-   (PaguroRrbVector. (paguro-subvec (.v vec) start end (count vec))
+   (PaguroRrbVector. (subvec* (.v vec) start end (count vec))
                      (- end start) (meta vec) 0 0)))
 
 (defn- splicev [^PaguroRrbVector v1 ^PaguroRrbVector v2]
@@ -178,7 +178,7 @@
         lg-n (/ (Math/log n) (Math/log 2))]
     (+ (* 2 lg-max-branch-factor) (- lg-n lg-max-tree-capacity))))
 
-(defn print-paguro-library-info []
+(defn print-library-info []
   (println "\n" "NODE_LENGTH_POW_2" node-length-pow-2
            "\n" "STRICT_NODE_LENGTH" strict-node-length
            "\n" "HALF_STRICT_NODE_LENGTH" half-strict-node-length

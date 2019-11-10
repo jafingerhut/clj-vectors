@@ -20,11 +20,11 @@
 
 (def empty-vector-constant (cp/vector))
 
-(defn paguro-seq->vec [s]
+(defn seq->vec [s]
   (into empty-vector-constant s))
 
-(def paguro-test-config
-  {:seq->vec paguro-seq->vec
+(def test-config
+  {:seq->vec seq->vec
    :test-subvec cp/subvec
    :test-catvec cp/catvec
    :same-coll? utils/same-coll?
@@ -34,26 +34,26 @@
 
 (deftest test-common-paguro
   (println "Details of Paguro RrbTree (default 32) implementation:")
-  (cp/print-paguro-library-info)
-  (tc/test-all-common paguro-test-config))
+  (cp/print-library-info)
+  (tc/test-all-common test-config))
 
 (deftest test-long-paguro
-  (tl/test-all-long paguro-test-config))
+  (tl/test-all-long test-config))
 
 (deftest test-vector-like
   (println "assert-vector-like for RrbTree(32) with num-collection-check-tests="
            num-collection-check-tests)
-  (cc/assert-vector-like num-collection-check-tests (cp/vector) gen/int))
+  (cc/assert-vector-like num-collection-check-tests empty-vector-constant gen/int))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def empty-vector-constant8 (cp8/vector))
 
-(defn paguro-seq->vec8 [s]
+(defn seq->vec8 [s]
   (into empty-vector-constant8 s))
 
-(def paguro-test-config8
-  {:seq->vec paguro-seq->vec8
+(def test-config8
+  {:seq->vec seq->vec8
    :test-subvec cp8/subvec
    :test-catvec cp8/catvec
    :same-coll? utils/same-coll?
@@ -63,15 +63,15 @@
 
 (deftest test-common-paguro8
   (println "Details of Paguro RrbTree8 implementation:")
-  (cp8/print-paguro-library-info)
-  (tc/test-all-common paguro-test-config8))
+  (cp8/print-library-info)
+  (tc/test-all-common test-config8))
 
 (deftest test-long-paguro8
   (println "Details of Paguro RrbTree8 implementation:")
-  (cp8/print-paguro-library-info)
-  (tl/test-all-long paguro-test-config8))
+  (cp8/print-library-info)
+  (tl/test-all-long test-config8))
 
 (deftest test-vector-like8
   (println "assert-vector-like for RrbTree8 with num-collection-check-tests="
            num-collection-check-tests)
-  (cc/assert-vector-like num-collection-check-tests (cp8/vector) gen/int))
+  (cc/assert-vector-like num-collection-check-tests empty-vector-constant8 gen/int))
