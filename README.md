@@ -44,7 +44,7 @@ for why the modified version of the Paguro library was created.
 ```bash
 $ git clone https://github.com/jafingerhut/Paguro
 $ cd Paguro
-$ git checkout andy-experiments
+$ git checkout andy-experiments-plus-proposed-fix-v1
 $ ./mvn-build.sh
 ```
 
