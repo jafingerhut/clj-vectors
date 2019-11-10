@@ -20,12 +20,12 @@
 
 (defn test-splicing
   [{:keys [check-catvec test-catvec seq->vec] :as opts}]
-  (is (check-catvec 1025 1025 3245 1025 32768 1025 1025 10123 1025 1025))
+  (is (= true (check-catvec 1025 1025 3245 1025 32768 1025 1025 10123 1025 1025)))
   (when do-paguro-312-failing-tests
-    (is (check-catvec 10 40 40 40 40 40 40 40 40)))
-  (is (apply check-catvec (repeat 30 33)))
-  (is (check-catvec 26091 31388 1098 43443 46195 4484 48099 7905
-                    13615 601 13878 250 10611 9271 53170))
+    (is (= true (check-catvec 10 40 40 40 40 40 40 40 40))))
+  (is (= true (apply check-catvec (repeat 30 33))))
+  (is (= true (check-catvec 26091 31388 1098 43443 46195 4484 48099 7905
+                            13615 601 13878 250 10611 9271 53170)))
   
   ;; Order that catvec will perform splicev calls:
   (let [my-splice test-catvec
@@ -586,6 +586,19 @@
 ;; or not.  That argument should be chosen by the caller using partia
 ;; or similar mechanism.
 
+(defn make-empty-vector-fn [opts]
+  (let [seq->vec (:seq->vec opts)]
+    (fn []
+      (seq->vec []))))
+
+(defn make-check-subvec-fn [opts]
+  (let [{:keys [seq->vec test-subvec same-coll?]} opts]
+    (partial utils/check-subvec seq->vec test-subvec same-coll?)))
+
+(defn make-check-catvec-fn [opts]
+  (let [{:keys [seq->vec test-catvec same-coll?]} opts]
+    (partial utils/check-catvec seq->vec test-catvec same-coll?)))
+
 (defn test-all-common
   [opts]
   (assert (every? #(contains? opts %) [:seq->vec
@@ -596,16 +609,14 @@
                                        :max-supported-height
                                        :lg-fullness]))
   (let [{:keys [seq->vec test-subvec test-catvec same-coll?]} opts
-        empty-vector #(seq->vec [])
+        empty-vector (make-empty-vector-fn opts)
         v (empty-vector)
         opts (assoc opts
                     :empty-vector empty-vector
                     :supports-transient? (instance?
                                           clojure.lang.IEditableCollection v)
-                    :check-subvec (partial utils/check-subvec
-                                           seq->vec test-subvec same-coll?)
-                    :check-catvec (partial utils/check-catvec
-                                           seq->vec test-catvec same-coll?)
+                    :check-subvec (make-check-subvec-fn opts)
+                    :check-catvec (make-check-catvec-fn opts)
                     :array-kind (get opts :array-kind :object-array))]
 
     (when (:supports-transient? opts)

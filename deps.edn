@@ -7,31 +7,21 @@
  :aliases
  {;; Common alias to use for all Clojure/Java commands
   :clj {:jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}
-  ;; Common alias to use for all ClojureScript commands
-  :cljs {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.520"}}
-         :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}
 
   ;; - start a Clojure/Java Socket REPL on port 50505
   :clj-socket {:jvm-opts ["-Dclojure.server.repl={:port,50505,:accept,clojure.core.server/repl}"]}
-  ;; start a Node-based ClojureScript socket REPL on port 50505
-  :cljs-socket {:jvm-opts ["-Dclojure.server.repl={:port,50505,:accept,cljs.server.node/repl}"]}
 
-  ;; Common alias to use for all Clojure/Java commands that run tests
   :clj-test {:extra-paths ["test"]
              :extra-deps {org.clojure/test.check {:mvn/version "0.10.0"}
                           com.gfredericks/test.chuck {:mvn/version "0.2.10"}
                           collection-check {:mvn/version "0.1.7"}}}
-  ;; Common alias to use for all ClojureScript commands that run tests
-  :cljs-test {:extra-paths ["test"]
-              :extra-deps {org.clojure/test.check {:mvn/version "0.10.0"}
-                           com.gfredericks/test.chuck {:mvn/version "0.2.10"}
-                           collection-check {:mvn/version "0.1.7"}}}
 
-  ;; Run 'short' tests
-  :clj-runt {:main-opts ["-e" "(require,'[clojure.test,:as,t],'com.fingerhutpress.clj-vectors.test-clj-paguro-vector),(t/run-tests,'com.fingerhutpress.clj-vectors.test-clj-paguro-vector)"]}
-;;  :cljs-runt {:main-opts ["-m" "cljs.main"
-;;                          "-re" "node"
-;;                          "-e" "(require,'[clojure.test,:as,t],'clojure.core.rrb-vector.test-cljs-only,'clojure.core.rrb-vector.test-common),(t/run-tests,'clojure.core.rrb-vector.test-common),(t/run-tests,'clojure.core.rrb-vector.test-cljs-only)"]}
+  ;; Run tests on one vector library
+  :clj-test-paguro {:main-opts ["-e" "(require,'[clojure.test,:as,t],'com.fingerhutpress.clj-vectors.test-clj-paguro-vector),(t/run-tests,'com.fingerhutpress.clj-vectors.test-clj-paguro-vector)"]}
+  :clj-test-bifurcan {:main-opts ["-e" "(require,'[clojure.test,:as,t],'com.fingerhutpress.clj-vectors.test-bifurcan-list-vector),(t/run-tests,'com.fingerhutpress.clj-vectors.test-bifurcan-list-vector)"]}
+
+  ;; Run tests on one all vector libraries
+  :clj-test-all {:main-opts ["-e" "(require,'[clojure.test,:as,t],'com.fingerhutpress.clj-vectors.test-clj-paguro-vector,'com.fingerhutpress.clj-vectors.test-bifurcan-list-vector),(t/run-tests,'com.fingerhutpress.clj-vectors.test-clj-paguro-vector),(t/run-tests,'com.fingerhutpress.clj-vectors.test-bifurcan-list-vector)"]}
 
   :cljol {:extra-deps {cljol {:git/url "https://github.com/jafingerhut/cljol"
                               :sha "bb5549e9832e73e4a9fc5dfdf695c48e797729fa"}}}

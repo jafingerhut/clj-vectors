@@ -22,9 +22,12 @@ sock*)
     # Run REPL, with option to listen for Socket REPL connection, and
     # test paths in classpath.
     exec clj -A:clj:clj-test:clj-socket ;;
+paguro*)
+    exec clojure -A:clj:clj-test:clj-test-paguro ;;
+bifurcan*)
+    exec clojure -A:clj:clj-test:clj-test-bifurcan ;;
 test*)
-    # Run 'short' tests
-    exec clojure -A:clj:clj-test:clj-runt ;;
+    exec clojure -A:clj:clj-test:clj-test-all ;;
 # I tried Eastwood on the code, but it gave 'method code too large',
 # probably because of the large size of the macros in namespace
 # com.fingerhutpress.clj-vectors.cljify-jvm-vector.  Oh well.
