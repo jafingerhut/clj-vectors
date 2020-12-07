@@ -12,9 +12,9 @@
   :clj-socket {:jvm-opts ["-Dclojure.server.repl={:port,50505,:accept,clojure.core.server/repl}"]}
 
   :clj-test {:extra-paths ["test"]
-             :extra-deps {org.clojure/test.check {:mvn/version "0.10.0"}
+             :extra-deps {org.clojure/test.check {:mvn/version "1.1.0"}
                           com.gfredericks/test.chuck {:mvn/version "0.2.10"}
-                          collection-check {:mvn/version "0.1.7"}}}
+                          collection-check/collection-check {:mvn/version "0.1.7"}}}
 
   ;; Run tests on one vector library
   :clj-test-paguro {:main-opts ["-e" "(require,'[clojure.test,:as,t],'com.fingerhutpress.clj-vectors.test-clj-paguro-vector),(t/run-tests,'com.fingerhutpress.clj-vectors.test-clj-paguro-vector)"]}
@@ -23,8 +23,9 @@
   ;; Run tests on one all vector libraries
   :clj-test-all {:main-opts ["-e" "(require,'[clojure.test,:as,t],'com.fingerhutpress.clj-vectors.test-clj-paguro-vector,'com.fingerhutpress.clj-vectors.test-bifurcan-list-vector),(t/run-tests,'com.fingerhutpress.clj-vectors.test-clj-paguro-vector),(t/run-tests,'com.fingerhutpress.clj-vectors.test-bifurcan-list-vector)"]}
 
-  :cljol {:extra-deps {cljol {:git/url "https://github.com/jafingerhut/cljol"
-                              :sha "bb5549e9832e73e4a9fc5dfdf695c48e797729fa"}}}
+  :cljol {:extra-deps
+          {cljol/cljol {:git/url "https://github.com/jafingerhut/cljol"
+                        :sha "ff33d97f8375b4a0aaf758295e0aef7185ef9d6e"}}}
 
   ;; pull in specific versions of Clojure:
   :1.7    {:override-deps {org.clojure/clojure {:mvn/version "1.7.0"}}}
